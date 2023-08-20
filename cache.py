@@ -1,24 +1,10 @@
+from __future__ import annotations
 import os
 import json
 from typing import List
-from dataclasses import dataclass
+from schedule import Schedule
 
-
-@dataclass
-class Schedule:
-    name: str = ""
-    link: str = ""
-
-    def to_json(self) -> str:
-        return f"({self.name},{self.link})"
-
-    def from_json(self, data: str):
-        self.name: str = data[1:data.find(",")]
-        self.link: str = data[data.find(",") + 1:-1]
-        
-        return self
-
-
+    
 class Cache:
     DIR_NAME: str = "python-liu-schedule"
     FILE_NAME: str = "schedules.json"
@@ -34,6 +20,12 @@ class Cache:
         data.append(Schedule(name, link))
         self._write(data)
 
+    def remove_schedule(self, name: str) -> None:
+        schedules: List[Schedule] = [s for s in self._read() if not s.name == name]
+        self._write(schedules)
+
+    def get_schedules(self) -> List[Schedule]:
+        return self._read()
 
     def _read(self) -> List[Schedule]:
         data: List[str] = []
