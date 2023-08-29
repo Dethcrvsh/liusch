@@ -1,4 +1,5 @@
 import sys
+import time
 from typing import List
 from cache import Cache
 from schedule import Schedule
@@ -6,7 +7,7 @@ from data_fetcher import DataFetcher, ScheduleData
 
 
 class Scheduler:
-    USE_WHITELIST: bool = True
+    USE_WHITELIST: bool = False 
 
 
     def __init__(self) -> None:
@@ -17,12 +18,11 @@ class Scheduler:
         """Get the next calendar entry"""
         data: List[ScheduleData] = self.data_fetcher.get_data(self.cache.get_schedules())
 
-        if not data:
+        entry: ScheduleData | None = self._get_next_entry(data)
+
+        if entry is None:
             return ""
 
-        entry: ScheduleData = data[0]
-
-        # TODO: Handle several course codes and locations
         course_code: str = entry.course_codes[0]
 
         if self.USE_WHITELIST:
@@ -97,6 +97,14 @@ class Scheduler:
                 return course
 
         return ""
+
+    def _get_next_entry(self, data: List[ScheduleData]) -> ScheduleData | None:
+        """Get the next relevant entry"""
+        for schedule in data:
+            if schedule.unix_time >= time.time():
+                return schedule
+
+        return None
 
 
 if __name__ == "__main__":
