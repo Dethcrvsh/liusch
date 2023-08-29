@@ -7,42 +7,64 @@ from schedule import Schedule
     
 class Cache:
     DIR_NAME: str = "python-liu-schedule"
-    FILE_NAME: str = "schedules.json"
+    SCHEDULES_FILE: str = "schedules.json"
+    COURSES_FILE: str = "course_whitelist.json"
 
 
     def __init__(self) -> None:
-        self.dir: str = self._init_cache_dir()
-        self.file: str = os.path.join(self.dir, self.FILE_NAME)
+        self._dir: str = self._init_cache_dir()
+        self._schedules: str = os.path.join(self._dir, self.SCHEDULES_FILE)
+        self._courses: str = os.path.join(self._dir, self.COURSES_FILE)
 
 
     def add_schedule(self, name: str, link: str) -> None:
-        data: List[Schedule] = self._read()
+        data: List[Schedule] = self._read_schedules()
         data.append(Schedule(name, link))
-        self._write(data)
+        self._write_schedules(data)
+
+    def add_course(self, course: str) -> None:
+        """Add a course to the whitelist"""
+        data: List[str] = self._read_courses()
+
+        if course not in data:
+            data.append(course)
+
+        self._write_courses(data)
 
     def remove_schedule(self, name: str) -> None:
-        schedules: List[Schedule] = [s for s in self._read() if not s.name == name]
-        self._write(schedules)
+        schedules: List[Schedule] = [s for s in self._read_schedules() if not s.name == name]
+        self._write_schedules(schedules)
+
+    def remove_course(self, name: str) -> None:
+        courses: List[str] = [c for c in self._read_courses() if not c == name]
+        self._write_courses(courses)
 
     def get_schedules(self) -> List[Schedule]:
-        return self._read()
+        return self._read_schedules()
 
-    def _read(self) -> List[Schedule]:
-        data: List[str] = []
+    def get_courses(self) -> List[str]:
+        return self._read_courses()
 
+    def _read_schedules(self) -> List[Schedule]:
+        return [Schedule().from_json(schedule) for schedule in self._read_json(self._schedules)]
+
+    def _read_courses(self) -> List[str]:
+        return self._read_json(self._courses)
+
+    def _read_json(self, file_path: str) -> List[str]:
         try:
-            with open(self.file, "r") as file:
-                data: List[str] = json.load(file)
+            with open(file_path, "r") as file:
+                return json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
-            data: List[str] = []
+            return []
 
-        return [Schedule().from_json(schedule) for schedule in data]
-
-    
-    def _write(self, schedule_links: List[Schedule]) -> None:
-        with open(self.file, "w") as file:
+    def _write_schedules(self, schedule_links: List[Schedule]) -> None:
+        with open(self._schedules, "w") as file:
             json.dump(schedule_links, file, default=lambda o: o.to_json())
 
+    def _write_courses(self, courses: List[str]) -> None:
+        with open(self._courses, "w") as file:
+            json.dump(courses, file)
 
     def _init_cache_dir(self) -> str:
         # Get the home catalogue path
@@ -63,3 +85,4 @@ class Cache:
         os.makedirs(cache_dir, exist_ok=True)
 
         return cache_dir
+
