@@ -56,7 +56,7 @@ class Scheduler:
             case "--help" | "-h":
                 self._display_help()
             case _:
-                print(f"{argv[1]} is not a valid argument.")
+                print(f"{argv[1]} is not a valid argument. Try -h for help.")
 
     def _add_schedule(self, schedules: List[str]) -> None:
         if not len(schedules) % 2 == 0:
