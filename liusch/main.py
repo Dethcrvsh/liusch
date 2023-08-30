@@ -1,9 +1,9 @@
 import sys
 import time
 from typing import List
-from cache import Cache
-from schedule import Schedule
-from data_fetcher import DataFetcher, ScheduleData
+from .cache import Cache
+from .schedule import Schedule
+from .data_fetcher import DataFetcher, ScheduleData
 
 
 class Scheduler:
@@ -137,7 +137,11 @@ class Scheduler:
         print(f"\033[1m{text}\033[0m")
 
 
-if __name__ == "__main__":
+def main() -> None:
     scheduler: Scheduler = Scheduler()
     scheduler.parse_args(sys.argv)
+
+
+if __name__ == "__main__":
+    main()
 

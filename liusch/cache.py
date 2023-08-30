@@ -2,7 +2,7 @@ from __future__ import annotations
 import os
 import json
 from typing import List
-from schedule import Schedule
+from .schedule import Schedule
 
     
 class Cache:

@@ -5,7 +5,7 @@ import time
 from re import Match
 from typing import List
 from requests import Response
-from schedule import Schedule
+from .schedule import Schedule
 from datetime import date, datetime, timezone
 from dataclasses import dataclass, field
 
