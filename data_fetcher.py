@@ -1,5 +1,7 @@
 import requests
 import re
+import calendar
+import time
 from re import Match
 from typing import List
 from requests import Response
@@ -12,9 +14,10 @@ from dataclasses import dataclass, field
 class ScheduleData:
     start_date: str = ""
     start_time: str = ""
+    start_unix: float = 0
     end_date: str = ""
     end_time: str = ""
-    unix_time: float = 0
+    end_unix: float = 0
     course_codes: List[str] = field(default_factory=lambda: [])
     course_type: str = ""
     locations: List[str] = field(default_factory=lambda: [])
@@ -26,6 +29,7 @@ class DataFetcher:
     DATA_ENCODING: str = "utf-8"
 
     DATETIME_FORMAT: str = "%Y%m%dT%H%M%SZ"
+    WEEK_IN_SECONDS: int = 604800
     
     START_TIME_RE: str = "(?<=DTSTART:).*"
     END_TIME_RE: str = "(?<=DTEND:).*"
@@ -45,7 +49,7 @@ class DataFetcher:
                 data += self._parse_data(content)
 
         # Sort the entries
-        data.sort(key=lambda o: o.unix_time)
+        data.sort(key=lambda o: o.start_unix)
 
         return data
 
@@ -76,7 +80,8 @@ class DataFetcher:
             schedule.end_time = self._get_time_from_datetime(end_datetime)
 
             # Save unix time to be able to sort the schedule
-            schedule.unix_time = start_datetime.timestamp()
+            schedule.start_unix = start_datetime.timestamp()
+            schedule.end_unix = end_datetime.timestamp()
             
             # Get the course code, type and location
             course_codes_text = self._match_regex(entry, self.COURSE_CODE_RE)
@@ -106,6 +111,10 @@ class DataFetcher:
     
     def _get_date_from_datetime(self, date_time: datetime) -> str:
         """Get the formatted date from a datetime object"""
+        # Return weekday if less than a week is left
+        if date_time.timestamp() - time.time() < self.WEEK_IN_SECONDS:
+            return calendar.day_name[date_time.weekday()]
+
         return date_time.strftime("%Y-%m-%d")
 
     def _get_time_from_datetime(self, date_time: datetime) -> str:
