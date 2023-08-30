@@ -1,3 +1,4 @@
+LICENSE
 README.md
 setup.py
 liusch/__init__.py
