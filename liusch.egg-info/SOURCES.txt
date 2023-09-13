@@ -11,4 +11,5 @@ liusch.egg-info/PKG-INFO
 liusch.egg-info/SOURCES.txt
 liusch.egg-info/dependency_links.txt
 liusch.egg-info/entry_points.txt
+liusch.egg-info/requires.txt
 liusch.egg-info/top_level.txt

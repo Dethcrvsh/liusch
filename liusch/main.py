@@ -32,7 +32,7 @@ class Scheduler:
         if not course_code:
             return ""
 
-        return f"{entry.start_date} | {entry.start_time}-{entry.end_time} | {course_code} | {entry.course_type} | {entry.locations[0]}"
+        return f"{entry.start_date} | {entry.start_time}-{entry.end_time} | {course_code} | {entry.course_type} | {entry.locations[0] if entry.locations else ''}"
 
     def parse_args(self, argv: List[str]) -> None:
         # Exit if there are no arguments
