@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="liusch",
-    version="1.0.4",
+    version="1.0.5",
     packages=["liusch"],
     entry_points={
         "console_scripts": [
