@@ -34,7 +34,7 @@ class DataFetcher:
     START_TIME_RE: str = "(?<=DTSTART:).*"
     END_TIME_RE: str = "(?<=DTEND:).*"
     COURSE_CODE_RE: str = r"(?<=SUMMARY:).*(?=U)" 
-    TYPE_RE: str = r"(?<=Undervisningstyp: ).*?(?=\\)" 
+    TYPE_RE: str = r"(?<=typ: ).*?(?=\\)" 
     LOCATION_RE: str = r"(?<=Lokal: ).*?(?=\\n|\n|\r)"
 
 
