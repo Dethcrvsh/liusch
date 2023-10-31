@@ -7,7 +7,6 @@ from .data_fetcher import DataFetcher, ScheduleData
 
 
 class Scheduler:
-    USE_WHITELIST: bool = False 
     COMMAND_NAME: str = "liusch"
 
 
@@ -24,10 +23,7 @@ class Scheduler:
         if entry is None:
             return ""
 
-        course_code: str = entry.course_codes[0]
-
-        if self.USE_WHITELIST:
-            course_code: str = self._get_whitelisted_course(entry.course_codes)
+        course_code: str = self._get_whitelisted_course(entry.course_codes)
 
         if not course_code:
             return ""
@@ -52,7 +48,7 @@ class Scheduler:
             case "--list-schedules" | "-ls":
                 self._list_schedules()
             case "--list-courses" | "-lsw":
-                print(self.cache.get_courses())
+                self._list_courses()
             case "--help" | "-h":
                 self._display_help()
             case _:
@@ -87,16 +83,19 @@ class Scheduler:
         for schedule in self.cache.get_schedules():
             print("{:<24} {}".format(schedule.name, schedule.link))
 
+    def _list_courses(self) -> None:
+        for course in self.cache.get_courses():
+            print(course)
+
     def _get_whitelisted_course(self, courses: List[str]) -> str:
         """Get the course that's in the whitelist from a list of courses"""
         whitelist: List[str] = self.cache.get_courses()
 
         for course in courses:
-            print(f"{course} in {whitelist}")
             if course in whitelist:
                 return course
 
-        return ""
+        return courses[0]
 
     def _get_next_entry(self, data: List[ScheduleData]) -> ScheduleData | None:
         """Get the next relevant entry"""
